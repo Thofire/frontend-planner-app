@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import CustomAppBar from './components/appbar'
 
 export default function Home() {
