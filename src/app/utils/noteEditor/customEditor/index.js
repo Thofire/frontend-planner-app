@@ -10,12 +10,11 @@ const embedRegexes = [
 
 
 const CustomEditor = {
-    handleEmbed: async (editor, event, client) => {
+    handleEmbed: async (editor, event) => {
         const text = event.clipboardData.getData('text/plain')
 
         const matchItem = await asyncSome(embedRegexes, async ({ regex, type }) => {
             const match = text.match(regex)
-            if (!match) return false
 
             if (match) {
                 event.preventDefault()
@@ -35,10 +34,12 @@ const CustomEditor = {
                     ])
                 return true
             }
+            return false
         }
+        return false
         })
     },
-    handlePaste(editor, event) {
+    handlePaste: async (editor, event)  => {
 
         CustomEditor.handleEmbed(editor,event)
         console.log('onPaste', event.clipboardData.getData('text/plain'))

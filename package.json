@@ -21,8 +21,7 @@
     "react-dom": "^18",
     "react-youtube": "^10.1.0",
     "slate": "^0.101.5",
-    "slate-react": "^0.101.5",
-    "trpc": "^0.11.3"
+    "slate-react": "^0.101.5"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",
