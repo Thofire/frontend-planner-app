@@ -3,9 +3,14 @@ import * as React from 'react';
 import { useCallback, useState } from 'react';
 import { Button, Flexbox } from '@mui/material';
 import { Editor, createEditor, Transforms, Element } from 'slate'
-import withEmbeds from '../utils/withEmbeds';
 import { Slate, Editable, withReact, useSlateStatic } from 'slate-react'
-import YouTubeVid from '../utils/youtubeEmbed';
+import withEmbeds from '../utils/noteEditor/withEmbeds';
+import YouTubeVid from '../utils/noteEditor/youtubeEmbed';
+import DefaultElement from './Editor/DefaultElement';
+import Leaf from './Editor/Leaf';
+import ImageEmbed from '../utils/noteEditor/ImageEmbed';
+import CustomEditor from '../utils/noteEditor/customEditor';
+import ToolBarEditor from './Editor/ToolBarEditor';
 const initialValue = [
     {
         type: 'paragraph',
@@ -18,125 +23,6 @@ const CodeElement = props => (
         <code>{props.children}</code>
     </pre>
 )
-const DefaultElement = props => <p{...props.attributes}>{props.children}</p>
-
-
-
-
-const Leaf = props => (
-    <span
-        {...props.attributes}
-        style={{ fontWeight: props.leaf.bold ? 'bold' : 'normal' }}
-    >
-        {props.children}
-    </span>
-)
-
-const embedRegexes = [
-    {
-        regex: /https:\/\/www\.youtube\.com\/watch\?v=(\w+)/,
-        type: 'youtube',
-    },
-]
-
-
-const CustomEditor = {
-    handleEmbed(editor, event) {
-        const text = event.clipboardData.getData('text/plain')
-
-        const matchItem = embedRegexes.some(({ regex, type }) => {
-            const match = text.match(regex)
-            if (!match) return false
-
-            if (match) {
-                event.preventDefault()
-
-                if (type === 'youtube'){
-                Transforms.insertNodes(editor,
-                    [
-                        {
-                            children: [{text: ''}],
-                            type,
-                            youtubeId: match[1],
-                        },
-                        {
-                            children:[{text: ''}],
-                            type:'paragraph',
-                        }
-                    ])
-                return true
-            }
-        }
-        })
-    },
-    handlePaste(editor, event) {
-
-        CustomEditor.handleEmbed(editor,event)
-        console.log('onPaste', event.clipboardData.getData('text/plain'))
-    },
-
-    isBoldMarkActive(editor) {
-        const marks = Editor.marks(editor)
-        return marks ? marks.bold === true : false
-    },
-    isCodeBlockActive(editor) {
-        const [match] = Editor.nodes(editor, {
-            match: n => n.type === 'code',
-        })
-        return !!match
-    },
-    isItalicsActive(editor) {
-        const marks = Editor.marks(editor)
-        return marks ? marks.italics === true : false
-    },
-    isStrikeThroughActive(editor) {
-        const marks = Editor.marks(editor)
-        return marks ? marks.strightThrough === true : false
-    },
-
-    toggleBoldMark(editor) {
-        const isActive = CustomEditor.isBoldMarkActive(editor)
-        if (isActive) {
-            Editor.removeMark(editor, 'bold')
-        }
-        else {
-            Editor.addMark(editor, 'bold', true)
-        }
-    },
-    toggleCodeBlock(editor) {
-        const isActive = CustomEditor.isCodeBlockActive(editor)
-        Transforms.setNodes(
-            editor,
-            { type: isActive ? null : 'code' },
-            { match: n => Element.isElement(n) && Editor.isBlock(editor, n) },
-        )
-    },
-
-    toggleItalicMark(editor) {
-        const isActive = CustomEditor.isItalicsActive(editor)
-        if (isActive) {
-            Editor.removeMark(editor, 'italic')
-        }
-        else {
-            Editor.addMark(editor, 'italic', true)
-        }
-    },
-
-    toggleStrickthrough(editor) {
-        const isActive = CustomEditor.isStrikeThroughActive(editor)
-        if (isActive) {
-            Editor.removeMark(editor, 'strikeThrough')
-        }
-        else {
-            Editor.addMark(editor, 'strikeThrough', true)
-        }
-    },
-}
-
-const CustomImage = props => (
-    <img {...props.attributes} src={props.element.url} alt="img" />
-)
-
 
 const NewPostPage = () => {
     const [editor] = useState(() => withEmbeds(withReact(createEditor())))
@@ -146,7 +32,7 @@ const NewPostPage = () => {
             case 'code':
                 return <CodeElement {...props} />
             case 'image':
-                return <CustomImage {...props} />
+                return <ImageEmbed {...props} />
             case 'youtube':
                 return <YouTubeVid {...props} />
             default:
@@ -155,7 +41,6 @@ const NewPostPage = () => {
     }, [])
 
     const renderLeaf = useCallback(props => <Leaf {...props} />, [])
-
     return (
         <div>
             <Slate
@@ -173,101 +58,8 @@ const NewPostPage = () => {
                     }
                 }}
             >
-                <Button variant='outlined'
-                    onMouseDown={(event) => {
-                        event.preventDefault()
-                        CustomEditor.toggleBoldMark(editor)
-                    }}
-                >Bold
-                </Button>
-                <Button variant='outlined'
-                    onMouseDown={(event) => {
-                        event.preventDefault()
-                        CustomEditor.toggleCodeBlock(editor)
-                    }}
-                >Code
-                </Button>
-
-                <Button variant='outlined'
-                    onMouseDown={(event) => {
-                        event.preventDefault()
-                        CustomEditor.toggleItalicMark(editor)
-                    }}
-                >Italic
-                </Button>
-
-                <Button variant='outlined'
-                    onMouseDown={(event) => {
-                        event.preventDefault()
-                        CustomEditor.toggleUnderlineMark(editor)
-                    }}
-                >Underline
-                </Button>
-
-                <Button variant='outlined'
-                    onMouseDown={(event) => {
-                        event.preventDefault()
-                        CustomEditor.toggleLinkMark(editor)
-                    }}
-                >Link
-                </Button>
-
-                <Button variant='outlined'
-                    onMouseDown={(event) => {
-                        event.preventDefault()
-                        CustomEditor.toggleStrickthrough(editor)
-                    }}
-                >Strike Through
-                </Button>
-
-                <Button variant='outlined'
-                    onMouseDown={(event) => {
-                        event.preventDefault()
-                        CustomEditor.toggleNListMark(editor)
-                    }}
-                >Numbered List
-                </Button>
-
-                <Button variant='outlined'
-                    onMouseDown={(event) => {
-                        event.preventDefault()
-                        CustomEditor.toggleBulletsMark(editor)
-                    }}
-                >Bullets
-                </Button>
-
-                <Button variant='outlined'
-                    onMouseDown={(event) => {
-                        event.preventDefault()
-                        CustomEditor.toggleItalicMark(editor)
-                    }}
-                >H1
-                </Button>
-
-                <Button variant='outlined'
-                    onMouseDown={(event) => {
-                        event.preventDefault()
-                        CustomEditor.toggleItalicMark(editor)
-                    }}
-                >H2
-                </Button>
-
-                <Button variant='outlined'
-                    onMouseDown={(event) => {
-                        event.preventDefault()
-                        CustomEditor.toggleItalicMark(editor)
-                    }}
-                >Image
-                </Button>
-
-                <Button variant='outlined'
-                    onMouseDown={(event) => {
-                        event.preventDefault()
-                        CustomEditor.log(editor.children)
-                    }}
-                >Save
-                </Button>
-
+                <ToolBarEditor>
+                </ToolBarEditor>
                 <Editable
                     onChange={(value) => {
                         console.log('onChange', value)
