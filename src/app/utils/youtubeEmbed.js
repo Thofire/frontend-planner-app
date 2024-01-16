@@ -1,4 +1,4 @@
-import YouTubeEmbed from 'react'
+import YouTubeEmbed from 'react-youtube'
 
 const YouTubeVid= (props) => {
     const { attributes,children,element} = props
@@ -8,11 +8,10 @@ const YouTubeVid= (props) => {
         <div {...attributes}>
             <div contentEditabl={false}>
         <YouTubeEmbed
-            contentEditable={false}
             videoId={youtubeId}
         />
-        {children}
     </div>
+    {children}
     </div>
     )
 }

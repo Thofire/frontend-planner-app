@@ -44,22 +44,34 @@ const CustomEditor = {
     handleEmbed(editor, event) {
         const text = event.clipboardData.getData('text/plain')
 
-        embedRegexes.some(({ regex, type }) => {
+        const matchItem = embedRegexes.some(({ regex, type }) => {
             const match = text.match(regex)
+            if (!match) return false
+
             if (match) {
                 event.preventDefault()
 
-                const url = text
-                const embed = { type, youtubeId: match[1], children: [{ text: url }] }
-                Transforms.insertNodes(editor, embed)
-
+                if (type === 'youtube'){
+                Transforms.insertNodes(editor,
+                    [
+                        {
+                            children: [{text: ''}],
+                            type,
+                            youtubeId: match[1],
+                        },
+                        {
+                            children:[{text: ''}],
+                            type:'paragraph',
+                        }
+                    ])
                 return true
             }
-            return false
+        }
         })
     },
     handlePaste(editor, event) {
 
+        CustomEditor.handleEmbed(editor,event)
         console.log('onPaste', event.clipboardData.getData('text/plain'))
     },
 
