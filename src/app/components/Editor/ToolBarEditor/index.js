@@ -2,7 +2,8 @@ import { Box, Button, flex } from "@mui/material";
 import CustomEditor from "@/app/utils/noteEditor/customEditor";
 import { Editor } from "slate";
 
-const ToolBarEditor = (editor) => {
+const ToolBarEditor = (props) => {
+    const {editor} = props
     return (
         <Box sx={{ display: flex }}>
             <Button variant='outlined'

@@ -87,7 +87,14 @@ const CustomEditor = {
             Editor.addMark(editor, 'italic', true)
         }
     },
-
+    toggleMark(editor, type) {
+        const isActive = CustomEditor.isMarkActive(editor, type)
+        if (isActive) {
+          Editor.removeMark(editor, type)
+        } else {
+          Editor.addMark(editor, type, true)
+        }
+      },
     toggleStrickthrough(editor) {
         const isActive = CustomEditor.isStrikeThroughActive(editor)
         if (isActive) {
