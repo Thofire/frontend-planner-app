@@ -1,6 +1,4 @@
-import asyncSome from "../asyncSome"
-import { Editor, Transforms, Element} from 'slate'
-
+import { Editor, Transforms, Element } from 'slate'
 const embedRegexes = [
     {
         regex: /https:\/\/www\.youtube\.com\/watch\?v=(\w+)/,
@@ -10,62 +8,60 @@ const embedRegexes = [
 
 
 const CustomEditor = {
-    handleEmbed: async (editor, event) => {
+    handleEmbed(editor, event) {
         const text = event.clipboardData.getData('text/plain')
 
-        const matchItem = await asyncSome(embedRegexes, async ({ regex, type }) => {
+        embedRegexes.some(({ regex, type }) => {
             const match = text.match(regex)
 
             if (match) {
                 event.preventDefault()
 
-                if (type === 'youtube'){
-                Transforms.insertNodes(editor,
-                    [
-                        {
-                            children: [{text: ''}],
-                            type,
-                            youtubeId: match[1],
-                        },
-                        {
-                            children:[{text: ''}],
-                            type:'paragraph',
-                        }
-                    ])
-                return true
+                if (type === 'youtube') {
+                    Transforms.insertNodes(editor,
+                        [
+                            {
+                                children: [{ text: '' }],
+                                type,
+                                youtubeId: match[1],
+                            },
+                            {
+                                children: [{ text: '' }],
+                                type: 'paragraph',
+                            }
+                        ])
+                    return true
+                }
             }
             return false
-        }
-        return false
         })
     },
-    handlePaste: async (editor, event)  => {
+    getMarks() {
 
-        CustomEditor.handleEmbed(editor,event)
+    },
+    handlePaste(editor, event) {
+
+        CustomEditor.handleEmbed(editor, event)
         console.log('onPaste', event.clipboardData.getData('text/plain'))
     },
 
-    isBoldMarkActive(editor) {
+    isMarkActive(editor, format) {
         const marks = Editor.marks(editor)
-        return marks ? marks.bold === true : false
+        return marks ? marks[format] === true : false
     },
+
     isCodeBlockActive(editor) {
         const [match] = Editor.nodes(editor, {
             match: n => n.type === 'code',
         })
         return !!match
     },
-    isItalicsActive(editor) {
-        const marks = Editor.marks(editor)
-        return marks ? marks.italic === true : false
-    },
     isStrikeThroughActive(editor) {
         const marks = Editor.marks(editor)
         return marks ? marks.strightThrough === true : false
     },
-
     toggleBoldMark(editor) {
-        const isActive = CustomEditor.isBoldMarkActive(editor)
+        const isActive = CustomEditor.isMarkActive(editor, 'bold')
         if (isActive) {
             Editor.removeMark(editor, 'bold')
         }
@@ -83,7 +79,7 @@ const CustomEditor = {
     },
 
     toggleItalicMark(editor) {
-        const isActive = CustomEditor.isItalicsActive(editor)
+        const isActive = CustomEditor.isMarkActive(editor, 'italic')
         if (isActive) {
             Editor.removeMark(editor, 'italic')
         }
