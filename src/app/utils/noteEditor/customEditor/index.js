@@ -1,4 +1,8 @@
-import { Editor, Transforms, Element } from 'slate'
+import { Editor, Transforms, Element as SlateElement } from 'slate'
+
+const LIST_TYPES = ['numbered-list', 'bulleted-list']
+const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify']
+
 const embedRegexes = [
     {
         regex: /https:\/\/www\.youtube\.com\/watch\?v=(\w+)/,
@@ -36,72 +40,74 @@ const CustomEditor = {
             return false
         })
     },
-    getMarks() {
 
-    },
     handlePaste(editor, event) {
 
         CustomEditor.handleEmbed(editor, event)
         console.log('onPaste', event.clipboardData.getData('text/plain'))
     },
 
+    isBlockActive(editor, format, blockType = 'type') {
+        const { selection } = editor
+        if (!selection) return false
+
+        const [match] = Array.from(
+            Editor.nodes(editor, {
+                at: Editor.unhangRange(editor, selection),
+                match: n =>
+                    !Editor.isEditor(n) &&
+                    SlateElement.isElement(n) &&
+                    n[blockType] === format,
+            })
+        )
+        return !!match
+    },
+
+    toggleBlock(editor, format) {
+        const isActive = CustomEditor.isBlockActive(
+            editor,
+            format,
+            TEXT_ALIGN_TYPES.includes(format) ? 'align' : 'type'
+        )
+        const isList = LIST_TYPES.includes(format)
+
+        Transforms.unwrapNodes(editor, {
+            match: n =>
+                !Editor.isEditor(n) &&
+                SlateElement.isElement(n) &&
+                LIST_TYPES.includes(n.type) &&
+                !TEXT_ALIGN_TYPES.includes(format),
+            split: true,
+        })
+        let newProperties
+        if (TEXT_ALIGN_TYPES.includes(format)) {
+            newProperties = {
+                align: isActive ? undefined : format,
+            }
+        } else {
+            newProperties = {
+                type: isActive ? 'paragraph' : isList ? 'list-item' : format,
+            }
+        }
+        Transforms.setNodes(editor, newProperties)
+
+        if (!isActive && isList) {
+            const block = { type: format, children: [] }
+            Transforms.wrapNodes(editor, block)
+        }
+    },
+    
     isMarkActive(editor, format) {
         const marks = Editor.marks(editor)
         return marks ? marks[format] === true : false
     },
 
-    isCodeBlockActive(editor) {
-        const [match] = Editor.nodes(editor, {
-            match: n => n.type === 'code',
-        })
-        return !!match
-    },
-    isStrikeThroughActive(editor) {
-        const marks = Editor.marks(editor)
-        return marks ? marks.strightThrough === true : false
-    },
-    toggleBoldMark(editor) {
-        const isActive = CustomEditor.isMarkActive(editor, 'bold')
-        if (isActive) {
-            Editor.removeMark(editor, 'bold')
-        }
-        else {
-            Editor.addMark(editor, 'bold', true)
-        }
-    },
-    toggleCodeBlock(editor) {
-        const isActive = CustomEditor.isCodeBlockActive(editor)
-        Transforms.setNodes(
-            editor,
-            { type: isActive ? null : 'code' },
-            { match: n => Element.isElement(n) && Editor.isBlock(editor, n) },
-        )
-    },
-
-    toggleItalicMark(editor) {
-        const isActive = CustomEditor.isMarkActive(editor, 'italic')
-        if (isActive) {
-            Editor.removeMark(editor, 'italic')
-        }
-        else {
-            Editor.addMark(editor, 'italic', true)
-        }
-    },
     toggleMark(editor, type) {
         const isActive = CustomEditor.isMarkActive(editor, type)
         if (isActive) {
-          Editor.removeMark(editor, type)
+            Editor.removeMark(editor, type)
         } else {
-          Editor.addMark(editor, type, true)
-        }
-      },
-    toggleStrickthrough(editor) {
-        const isActive = CustomEditor.isStrikeThroughActive(editor)
-        if (isActive) {
-            Editor.removeMark(editor, 'strikeThrough')
-        }
-        else {
-            Editor.addMark(editor, 'strikeThrough', true)
+            Editor.addMark(editor, type, true)
         }
     },
 }

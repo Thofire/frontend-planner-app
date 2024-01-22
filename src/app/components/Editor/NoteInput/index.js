@@ -5,7 +5,10 @@ import DefaultElement from "../Elements/DefaultElement";
 import Leaf from "../Leaf";
 import CustomEditor from "@/app/utils/noteEditor/customEditor";
 import { Editable } from "slate-react";
-
+import HeadingOne from "../Elements/HeadingOne";
+import HeadingTwo from "../Elements/HeadingTwo";
+import NumberedList from "../Elements/NumberedList";
+import Bullets from "../Elements/Bullets";
 const NoteInput = (props) =>{
     const {editor } = props
 
@@ -17,12 +20,20 @@ const NoteInput = (props) =>{
 
     const renderElement = useCallback((props) => {
         switch (props.element.type) {
+            case 'bullets':
+                return <Bullets {...props} />
             case 'code':
                 return <CodeElement {...props} />
             case 'image':
                 return <ImageEmbed {...props} />
             case 'youtube':
                 return <YouTubeVid {...props} />
+            case 'heading-one':
+                return <HeadingOne {...props} />
+            case 'heading-two':
+                return <HeadingTwo {...props} />
+            case 'numbered-list':
+                return <NumberedList {...props} />
             default:
                 return <DefaultElement {...props} />
         }
@@ -31,7 +42,7 @@ const NoteInput = (props) =>{
     const renderLeaf = useCallback(props => <Leaf {...props} />, [])
 
 
-    return (
+    return (<div>
         <Editable
         onChange={(value) => {
             console.log('onChange', value)
@@ -44,23 +55,33 @@ const NoteInput = (props) =>{
             switch (event.key) {
                 case '`': {
                     event.preventDefault()
-                    CustomEditor.toggleCodeBlock(editor)
+                    CustomEditor.toggleBlock(editor,'code')
                     break
                 }
 
                 case 'b': {
                     event.preventDefault()
-                    CustomEditor.toggleBoldMark(editor)
+                    CustomEditor.toggleMark(editor,'bold')
                     break
                 }
                 case 'i': {
                     event.preventDefault()
-                    CustomEditor.toggleItalicMark(editor)
+                    CustomEditor.toggleMark(editor,'italic')
                     break
                 }
                 case '-': {
                     event.preventDefault()
                     CustomEditor.toggleStrickthrough(editor)
+                    break
+                }
+                case 'u': {
+                    event.preventDefault()
+                    CustomEditor.toggleBlock(editor,'underline')
+                    break
+                }
+                case 'h':{
+                    event.preventDefault()
+                    CustomEditor.toggleBlock(editor,'heading-one')
                     break
                 }
             }
@@ -71,7 +92,7 @@ const NoteInput = (props) =>{
         }}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
-    />
+    /></div>
     )
 }
 export default NoteInput
