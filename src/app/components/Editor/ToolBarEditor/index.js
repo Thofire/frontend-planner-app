@@ -29,14 +29,7 @@ const ToolBarEditor = (props) => {
                 }}
             >Link
             </Button>
-
-            <Button variant='outlined'
-                onMouseDown={(event) => {
-                    event.preventDefault()
-                    CustomEditor.toggleImageMark(editor)         //fix
-                }}
-            >Image
-            </Button>
+            <BlockButton format='link'><AddLinkIcon/></BlockButton>
             <BlockButton format='numbered-list'>123</BlockButton>
             <BlockButton format='bullets'><CircleIcon/></BlockButton>
             <BlockButton format='code'><CodeIcon /></BlockButton>

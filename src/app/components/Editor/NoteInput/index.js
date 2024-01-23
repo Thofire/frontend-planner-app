@@ -9,6 +9,7 @@ import HeadingOne from "../Elements/HeadingOne";
 import HeadingTwo from "../Elements/HeadingTwo";
 import NumberedList from "../Elements/NumberedList";
 import Bullets from "../Elements/Bullets";
+import Link from "../Elements/Link";
 const NoteInput = (props) =>{
     const {editor } = props
 
@@ -24,6 +25,8 @@ const NoteInput = (props) =>{
                 return <Bullets {...props} />
             case 'code':
                 return <CodeElement {...props} />
+            case 'link':
+                return <Link {...props} />
             case 'image':
                 return <ImageEmbed {...props} />
             case 'youtube':
@@ -42,7 +45,7 @@ const NoteInput = (props) =>{
     const renderLeaf = useCallback(props => <Leaf {...props} />, [])
 
 
-    return (<div>
+    return (
         <Editable
         onChange={(value) => {
             console.log('onChange', value)
@@ -92,7 +95,7 @@ const NoteInput = (props) =>{
         }}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
-    /></div>
+    />
     )
 }
 export default NoteInput
