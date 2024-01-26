@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import {  createEditor} from 'slate'
 import { Slate,  withReact,  } from 'slate-react'
-import withEmbeds from './Editor/Elements/withEmbeds'
+import withEmbeds from './Editor/Elements/withEmbeds';
 import Editor from './Editor';
 const initialValue = [
     {
