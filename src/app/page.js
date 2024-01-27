@@ -1,5 +1,5 @@
 import CustomAppBar from './components/appbar'
-import NewPostPage from './components/newpostpage'
+import NewPostPage from './components/newPostPage'
 
 export default function Home() {
   return (
