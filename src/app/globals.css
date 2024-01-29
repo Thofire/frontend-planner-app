@@ -58,3 +58,14 @@ body {
   grid-template-rows: repeat(5, 1fr);
   grid-gap: 10px;
 }
+
+.ButtonCalc {
+  border: none;
+  background-color: rgb(80, 60, 209);
+  font-size: 24px;
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 10px;
+  outline: none;
+}

@@ -15,7 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 
 const pages = ['Calendar', 'Note Writer', 'Note Storage', 'Calculator', 'Upcoming Events'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Email (display fix)', 'Logout']; //pass in email and display it 
 
 function CustomAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
