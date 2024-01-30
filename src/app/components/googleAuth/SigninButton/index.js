@@ -9,8 +9,7 @@ const SigninButton = () => {
     if (session && session.user) {
         return (
         <div className="flex gap-4 mlm-auto">
-            <p className="white">{session.user.email}</p>
-            <button onClick={() => signOut()} className="text-orange-600">
+            <button onClick={() => signOut({ callbackUrl:'/'})} className="text-orange-600">
                 Sign Out
             </button>
         </div>
@@ -18,7 +17,7 @@ const SigninButton = () => {
     }
 
     return (
-        <button onClick={() => signIn()} className="white">
+        <button onClick={() => signIn({callbackUrl:'/mainPages/NoteWriter'})} className="white">
             Sign in
         </button>
 

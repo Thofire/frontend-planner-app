@@ -5,7 +5,6 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import Providers from './components/googleAuth/providers';
-import CustomAppBar from './components/appbar';
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
