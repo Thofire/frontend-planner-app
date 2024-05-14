@@ -69,3 +69,18 @@ body {
   border-radius: 10px;
   outline: none;
 }
+
+.titleDiv {  
+  width: 20%;
+  height: 100px;
+  padding: 10px;
+  border-radius: 10px;
+  outline-width: .1rem;
+  outline-color: black;
+  outline-style: solid;
+  background-color: beige;
+  text-align: center;
+}
+h1 {
+font-size: xx-large;
+}
