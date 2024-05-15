@@ -1,21 +1,35 @@
+'use client';
 import { Slate, withReact } from "slate-react"
 import { createEditor } from "slate"
 import withEmbeds from "./Elements/withEmbeds"
 import NoteInput from "./NoteInput"
 import ToolBarEditor from "./ToolBarEditor"
-import React, { useState } from "react"
+import React, { useState, useMemo, useEffect } from "react"
 //import api for backend, call User.CurrentStorage from mongodb and thne pass it through, update isAstChange 
 
+
+
 const Editor = (props) => {
-    const { children, initialValue } = props
+    const { children} = props
     const [editor] = useState(() => withEmbeds(withReact(createEditor())))
+    const initialValue = [{
+                type: 'paragraph', children: [{ text: 'A line of text in a paragraph.' }],  //Call Mongodb and store
+            },
+            ]
     // const initialValue = useMemo(() =>
-    //     JSON.parse(localStorage.getItem('content'))
-    //     || [{
-    //         type: 'paragraph', children: [{ text: 'A line of text in a paragraph.' }],   Call Mongodb and store
+    //     useEffect(() =>{
+    //         if (JSON.parse(window.localStorage.getItem('content'))!=null){
+    //     JSON.parse(window.localStorage.getItem('content'))
+    //         }
+    //     else [{
+    //         type: 'paragraph', children: [{ text: 'A line of text in a paragraph.' }],  //Call Mongodb and store
     //     },
     //     ],
-    //     [])
+    //     []},[]))
+    // useEffect(() => {
+    //     const
+    // }
+
     return (
         <Slate
             editor={editor}
@@ -27,8 +41,10 @@ const Editor = (props) => {
 
                 if (isAstChange) {
                     // Save the value to Local Storage.
+                    useEffect(() => {
                     const content = JSON.stringify(value)
-                    localStorage.setItem('content', content)    //change to mongodb
+                    window.localStorage.setItem('content', content)    //change to mongodb
+                    },[]);
                 }
             }}
         >
