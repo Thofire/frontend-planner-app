@@ -15,12 +15,16 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { signOut, useSession,status } from "next-auth/react"
 import SigninButton from '../googleAuth/SigninButton';
+import { useEffect } from 'react';
+import Router from 'next/router';
+
 
 function CustomAppBar() {
   const { data: session } = useSession();
 
-  const pages = ['Calendar', 'Note Writer', 'Note Storage', 'Calculator', 'Upcoming Events'];
-  const settings = ["Not Logged In", <SigninButton/>]
+  const pages = ['Calendar', 'NoteWriter', 'noteStorage', 'Calculator', 'UpcomingEvents'];
+  // const routes = ['/Calendar', 'Note Writer', 'noteStorage', 'Calculator', 'Upcoming Events'] fix routing to use these and fix name
+  const settings = [<SigninButton/>]
   //const settings = [session.user.email, <SigninButton/>] //pass in email and display it Use this when Done with home page + redirect
 
 
@@ -122,7 +126,7 @@ function CustomAppBar() {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() =>Router.push('/'+page)}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 {page}
@@ -164,4 +168,5 @@ function CustomAppBar() {
     </AppBar>
   );
 }
+
 export default CustomAppBar;
